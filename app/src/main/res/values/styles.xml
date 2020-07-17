@@ -4,7 +4,7 @@
         <item name="colorPrimary">#212121</item>
         <item name="colorPrimaryVariant">#000000</item>
         <item name="colorOnPrimary">#FFFFFF</item>
-        <item name="colorPrimaryDark">#000000</item>
+        <item name="colorPrimaryDark">#212121</item>
         <item name="colorSecondary">#000000</item>
         <item name="colorSecondaryVariant">#000000</item>
         <item name="colorOnSecondary">#FFFFFF</item>
