@@ -18,92 +18,103 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
-public class Register extends AppCompatActivity {
+public class Login extends AppCompatActivity {
+    private static String TAG = "Login";
 
-    private TextInputEditText etFullName;
     private TextInputEditText etEmail;
     private TextInputEditText etPassword;
-    private TextInputEditText etConfirmPassword;
-    private CardView cvRegister;
-    private TextView txtSignIn;
+    private TextView txtSignUp;
+    private TextView txtForgotPassword;
+    private CardView cvLogin;
     private ProgressBar pbLoading;
 
-    private String fullName, email, password, confirmPassword;
+    private String email, password;
 
     private FirebaseAuth mAuth;
-
-    private static String TAG = "Register";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_login);
 
-        etFullName = findViewById(R.id.etFullName);
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
-        etConfirmPassword = findViewById(R.id.etConfirmPassword);
-        cvRegister = findViewById(R.id.cvRegister);
-        txtSignIn = findViewById(R.id.txtSignIn);
+        txtSignUp = findViewById(R.id.txtSignUp);
+        txtForgotPassword = findViewById(R.id.txtForgotPassword);
+        cvLogin = findViewById(R.id.cvLogin);
         pbLoading = findViewById(R.id.pbLoading);
 
         mAuth = FirebaseAuth.getInstance();
 
-        cvRegister.setOnClickListener(new View.OnClickListener() {
+        cvLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fullName = etFullName.getText().toString();
-                email = etEmail.getText().toString();
-                password = etPassword.getText().toString();
-                confirmPassword = etConfirmPassword.getText().toString();
+                email = etEmail.getText().toString().trim();
+                password = etPassword.getText().toString().trim();
 
                 validate();
             }
         });
 
-        txtSignIn.setOnClickListener(new View.OnClickListener() {
+        txtForgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), Login.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                Intent intent = new Intent(getApplicationContext(), ForgotPassword.class);
+                startActivity(intent);
+            }
+        });
+
+        txtSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), Register.class);
                 startActivity(intent);
             }
         });
     }
 
-    private void validate() {
-        if (fullName.isEmpty()) {
-            etFullName.setError("Full Name cannot be empty");
-        } else if (email.isEmpty() || !email.contains("@")) {
-            etEmail.setError("Email must be valid");
-        } else if (password.isEmpty()) {
-            etPassword.setError("Password cannot be empty");
-        } else if (!password.equals(confirmPassword)) {
-            etPassword.setError("Password do not match");
-            etConfirmPassword.setError("Password do not match");
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+//        FirebaseUser currentUser = mAuth.getCurrentUser();
+//        if(currentUser != null){
+//            Intent intent = new Intent(getApplicationContext(), Dashboard.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//            startActivity(intent);
+//        }
+    }
+
+    private void validate(){
+        if(email.isEmpty()){
+            etEmail.setError("email cannot be empty!");
+        } else if (password.isEmpty() || password.length() < 4) {
+            etPassword.setError("Password cannot be less than 4 characters!");
         } else {
             pbLoading.setVisibility(View.VISIBLE);
-            signUpUser();
+            signInUser();
         }
     }
 
-    private void signUpUser() {
-        mAuth.createUserWithEmailAndPassword(email, password)
+    private void signInUser() {
+        mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             pbLoading.setVisibility(View.INVISIBLE);
-                            Log.d(TAG, "createUserWithEmail:success");
+                            Log.d(TAG, "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
                             Intent intent = new Intent(getApplicationContext(), Dashboard.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
                         } else {
                             // If sign in fails, display a message to the user.
                             pbLoading.setVisibility(View.INVISIBLE);
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(getApplicationContext(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
