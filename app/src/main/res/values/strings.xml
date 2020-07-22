@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">IghubAssignment</string>
+    <string name="emailSentErrorMessage">Error in sending Reset Mail.</string>
+    <string name="emailSentMessage">Email sent. Check Your Email Address.</string>
 </resources>

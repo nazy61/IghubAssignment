@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,6 +23,7 @@ public class ForgotPassword extends AppCompatActivity {
     private TextInputEditText etResetEmail;
     private CardView cvReset;
     private ProgressBar pbLoading;
+    private TextView tvMessage;
 
     private String email;
 
@@ -35,6 +37,7 @@ public class ForgotPassword extends AppCompatActivity {
         etResetEmail = findViewById(R.id.etResetEmail);
         cvReset = findViewById(R.id.cvReset);
         pbLoading = findViewById(R.id.pbLoading);
+        tvMessage = findViewById(R.id.tvMessage);
 
         cvReset.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,12 +65,11 @@ public class ForgotPassword extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             pbLoading.setVisibility(View.INVISIBLE);
-                            Log.d(TAG, "Email sent. Check Your Email Address.");
+                            tvMessage.setText(R.string.emailSentMessage);
                         } else {
                             pbLoading.setVisibility(View.INVISIBLE);
                             Log.w(TAG, "Error in sending Reset Mail", task.getException());
-                            Toast.makeText(getApplicationContext(), "Error in sending Reset Mail",
-                                    Toast.LENGTH_SHORT).show();
+                            tvMessage.setText(R.string.emailSentErrorMessage);
                         }
                     }
                 });
